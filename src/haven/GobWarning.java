@@ -9,10 +9,13 @@ import java.util.Map;
 import static haven.GameUI.*;
 import static haven.GobWarning.WarnMethod.*;
 import static haven.GobWarning.WarnTarget.*;
+import haven.Partyview.*;
 
 public class GobWarning extends GAttrib implements RenderTree.Node {
+    private static Partyview pv;
     private final ColoredRadius radius;
     private final WarnTarget tgt;
+    private static UI ui;
     
     public GobWarning(Gob gob) {
 	super(gob);
@@ -36,11 +39,19 @@ public class GobWarning extends GAttrib implements RenderTree.Node {
     public static boolean needsWarning(Gob gob) {
 	return categorize(gob) != null;
     }
-    
+    // TODO WARN ON PRIMARY TARGET
     private static WarnTarget categorize(Gob gob) {
-	if(gob.is(GobTag.FOE) && !gob.is(GobTag.DEAD)) {
-	    return player;
-	} else if(gob.is(GobTag.AGGRESSIVE) && !gob.anyOf(GobTag.DEAD, GobTag.KO)) {
+//        if (CFG.HIGHLIGHT_FOES.get()) {
+//	if ( ui != null && ui.sess.glob.party.memb.size() != 1) { //don't do anything if you don't have a party
+	if(gob.is(GobTag.FOE) && !gob.is(GobTag.DEAD) && !gob.is(GobTag.ME)) {
+	    gob.highlightFoe(1);
+//	    return player;
+	}
+//	else if (gob.is(GobTag.FRIEND) || gob.isFriend() && gob.is(GobTag.PLAYER) && !gob.is(GobTag.ME))  { gob.highlightFoe(3); }
+	else if (gob.is(GobTag.KO)) { gob.highlightFoe(2); }
+//	else if (gob.is(GobTag.FOE) && !gob.is(GobTag.DEAD)) {
+//	    return player;
+	else if(gob.is(GobTag.AGGRESSIVE) && !gob.anyOf(GobTag.DEAD, GobTag.KO)) {
 	    return animal;
 	} else if(gob.is(GobTag.GEM)) {
 	    return gem;
@@ -51,7 +62,7 @@ public class GobWarning extends GAttrib implements RenderTree.Node {
     }
     
     public enum WarnTarget {
-	player(50, "Player", Color.RED, new Color(192, 0, 0, 128), new Color(255, 224, 96)),
+	player(5, "Player", Color.RED, new Color(192, 0, 0, 128), new Color(255, 224, 96)),
 	animal(50, "Dangerous animal", Color.RED, new Color(192, 0, 0, 128), new Color(255, 224, 96)),
 	gem(5, "Gem", Color.GREEN, new Color(0, 192, 122, 64), new Color(255, 90, 200, 128)),
 	midges(15, "Midges", Color.MAGENTA, new Color(255, 255, 255, 64), new Color(128, 0, 255, 128));

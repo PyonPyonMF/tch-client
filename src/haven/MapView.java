@@ -219,6 +219,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		angl = tangl;
 	    
 	    Coord3f cc = getcc();
+	    if(CFG.FLATWORLD.get()) { cc.z = 0; }
 	    cc.y = -cc.y;
 	    if(curc == null)
 		curc = cc;
@@ -368,6 +369,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(Math.abs(tdist - dist) < 0.0001) dist = tdist;
 
 	    Coord3f mc = getcc();
+	    if(CFG.FLATWORLD.get()) { mc.z = 0; }
 	    mc.y = -mc.y;
 	    if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
 		cc = mc;
@@ -451,6 +453,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick2(double dt) {
 	    Coord3f cc = getcc();
+	    if(CFG.FLATWORLD.get()) { cc.z = 0; }
 	    cc.y = -cc.y;
 	    this.cc = cc;
 	}
@@ -535,6 +538,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    dt *= tf;
 	    float cf = 1f - (float)Math.pow(500, -dt);
 	    Coord3f mc = getcc();
+	    if(CFG.FLATWORLD.get()) { mc.z = 0; }
 	    mc.y = -mc.y;
 	    if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
 		cc = mc;
@@ -1270,7 +1274,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static final Uniform maploc = new Uniform(Type.VEC3, p -> {
 	    Coord3f orig = Homo3D.locxf(p).mul4(Coord3f.o);
 	    try {
-		orig.z = p.get(RenderContext.slot).context(Glob.class).map.getcz(orig.x, -orig.y);
+		orig.z = CFG.FLATWORLD.get() ? 0 : p.get(RenderContext.slot).context(Glob.class).map.getcz(orig.x, -orig.y);
 	    } catch(Loading l) {
 		/* XXX: WaterTile's obfog effect is the only thing
 		 * that uses maploc, in order to get the precise water
@@ -1755,6 +1759,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public Coord3f screenxf(Coord3f mc) {
+        if(CFG.FLATWORLD.get()) { mc.z = 0; }
 	return(clipxf(mc, false).toview(Area.sized(this.sz)));
     }
 
@@ -2715,6 +2720,45 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    inspect(rootxlate(ui.mc));
 	}
     }
+//    public void aggroclosest() {
+//	OCache oc = ui.sess.glob.oc;
+//	synchronized (oc) {
+//	    Gob gobcls = null;
+//	    double gobclsdist = Double.MAX_VALUE;
+//	    for (Gob gob : oc) {
+//		try {
+//		    Resource res = gob.getres();
+//		    gobcls = gob;
+//		    double dist = player().rc.dist(gob.rc);
+//		    gobclsdist = dist;
+//		    if (res != null && res.basename().equals("body") && player().id != gob.id ) {
+//				if (!gob.isFriend()) {
+////				    double dist = player().rc.dist(gob.rc);
+//				    if (dist < gobclsdist) {
+//					ui.message("no friend", GameUI.MsgType.GOOD);
+//					gobcls = gob;
+//					gobclsdist = dist;
+//				    }
+//				}
+//			}
+//		} catch (Loading l) {
+//		    ui.message("caught loading", GameUI.MsgType.BAD);
+//		}
+//	    }
+//
+//	    if (gobcls != null) {
+//	        ui.message("gobcls is not null, aggro now", GameUI.MsgType.INFO);
+//		ui.gui.act("aggro");
+//		ui.message(String.format("gob sc is %s", gobcls.sc), GameUI.MsgType.INFO);
+//		wdgmsg("click", gobcls.sc, Coord.z, 1, ui.modflags(), 0, (int) gobcls.id, gobcls.rc.floor(posres), 0, 0);
+//		cc = gobcls.rc;
+//		Gob pl = player();
+//		wdgmsg("click", pl.sc, pl.rc.floor(posres), 3, 0);
+//		cc = pl.rc;
+//	    }
+//	}
+//    }
+    
     
     public boolean isTracking() {
 	return cursor == trackCursor;

@@ -190,7 +190,11 @@ public class Ridges extends MapMesh.Hooks {
 	float lo, hi; {
 	    Coord gc = tc.add(m.ul);
 	    float z1 = (float)m.map.getfz(gc.add(tccs[e])), z2 = (float)m.map.getfz(gc.add(tccs[(e + 1) % 4]));
-	    lo = Math.min(z1, z2); hi = Math.max(z1, z2);
+	    if(CFG.FLATWORLD.get()) {  // TODO STATE COLOR
+		hi = Math.max(z1, z2) + 8;
+	    }
+	    else hi = Math.max(z1, z2);
+	    lo = Math.min(z1, z2);
 	}
 	int nseg = Math.max((int)Math.round((hi - lo) / segh), 2) - 1;
 	Vertex[] ret = new Vertex[nseg + 1];

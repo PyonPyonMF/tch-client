@@ -809,7 +809,10 @@ public class OptWnd extends WindowX {
     
 	y += STEP;
 	panel.add(new CFGBox("Store chat logs", CFG.STORE_CHAT_LOGS, "Logs are stored in 'chats' folder"), new Coord(x, y));
-    
+ 
+	y += STEP;
+	panel.add(new CFGBox("Flatworld", CFG.FLATWORLD), new Coord(x, y));
+	
 	y += STEP;
 	panel.add(new CFGBox("Item drop protection", CFG.ITEM_DROP_PROTECTION, "Drop items on cursor only when CTRL is pressed"), new Coord(x, y));
     
@@ -935,6 +938,12 @@ public class OptWnd extends WindowX {
 	
 	y += STEP;
 	panel.add(new CFGBox("Simple crops", CFG.SIMPLE_CROPS, "Requires area reload"), x, y);
+	
+	y += STEP;
+	panel.add(new CFGBox("Entering/Leaving in chat", CFG.ENTERING_MSG_IN_CHAT), x, y);
+	
+	y += STEP;
+	panel.add(new CFGBox("Highlight party members", CFG.PARTY_HIGHLIGHT), x, y);
 	
 	y += STEP;
 	panel.add(new CFGBox("Always show kin names", CFG.DISPLAY_KINNAMES), x, y);
@@ -1132,6 +1141,15 @@ public class OptWnd extends WindowX {
     
 	y += STEP;
 	panel.add(new CFGBox("Always mark current target", CFG.ALWAYS_MARK_COMBAT_TARGET , "Usually current target only marked when there's more than one"), x, y);
+	
+	y += STEP;
+	panel.add(new CFGBox("Stamina bar in combat", CFG.FIGHT_STAMINA_BAR), x, y);
+	
+	y += STEP;
+	panel.add(new CFGBox("Hide the clock", CFG.HIDE_THE_CLOCK), x, y);
+	
+	y+= STEP;
+	panel.add(new CFGBox("Show cooldown", CFG.SHOW_ACTION_COOLDOWN), x, y);
     
 	y += STEP;
 	panel.add(new CFGBox("Auto peace on combat start", CFG.COMBAT_AUTO_PEACE , "Automatically enter peaceful mode on combat start id enemy is aggressive - useful for taming"), x, y);

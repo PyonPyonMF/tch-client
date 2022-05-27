@@ -1,14 +1,7 @@
 <component name="ArtifactManager">
-  <artifact name="release">
+  <artifact type="jar" name="release">
     <output-path>$PROJECT_DIR$/out/artifacts/release</output-path>
-    <properties id="ant-preprocessing">
-      <options enabled="true">
-        <build-properties>
-          <build-property />
-        </build-properties>
-      </options>
-    </properties>
-    <root id="root">
+    <root id="archive" name="release.jar">
       <element id="file-copy" path="$PROJECT_DIR$/build/hafen.jar" />
     </root>
   </artifact>

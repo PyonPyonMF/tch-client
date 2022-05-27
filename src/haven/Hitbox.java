@@ -136,11 +136,12 @@ public class Hitbox extends SlottedNode implements Rendered {
 		    for (List<Coord3f> polygon : polygons) {
 			addLoopedVertices(vertices, polygon);
 		    }
-		
 		    float[] data = convert(vertices);
 		    VertexArray.Buffer vbo = new VertexArray.Buffer(data.length * 4, DataBuffer.Usage.STATIC, DataBuffer.Filler.of(data));
 		    VertexArray va = new VertexArray(LAYOUT, vbo);
-		
+//		    model = new Model(Model.Mode.TRIANGLES, VertexArray.Buffer(data),
+//			new Model.Indices(2 * 3, NumberFormat.UINT16, DataBuffer.Usage.STATIC, DataBuffer.Filler.of(data)).shared(),
+//			0, 2 * 3);
 		    model = new Model(Model.Mode.LINES, va, null);
 		
 		    MODEL_CACHE.put(res, model);

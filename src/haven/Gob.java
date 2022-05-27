@@ -27,7 +27,12 @@
 package haven;
 
 import java.awt.*;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.*;
+//import java.util.List;
+import java.util.List;
 import java.util.function.*;
 import haven.render.*;
 import haven.res.gfx.fx.msrad.MSRad;
@@ -38,8 +43,7 @@ import static haven.OCache.*;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Skeleton.HasPose {
     private static final Color COL_READY = new Color(16, 255, 16, 128);
-    private static final Color COL_FULL = new Color(215, 63, 250, 64);
-    private static final Color COL_EMPTY = new Color(104, 213, 253, 64);
+    private static final Color COL_EMPTY = new Color(64, 200, 250, 64);
     public Coord2d rc;
     public double a;
     public boolean virtual = false;
@@ -227,7 +231,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    public ResAttr mkattr(Gob gob, Message dat);
 	}
 
-	public static class FactMaker implements Resource.PublishedCode.Instancer<Factory> {
+	public static class FactMaker implements Resource.PublishedCode.Instancer {
 	    public Factory make(Class<?> cl, Resource ires, Object... argv) {
 		if(Factory.class.isAssignableFrom(cl))
 		    return(Resource.PublishedCode.Instancer.stdmake(cl.asSubclass(Factory.class), ires, argv));
@@ -399,6 +403,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    map.click(this, 3, Coord.z);
 	} catch (Exception ignored) {}
     }
+    public void lclick() {
+        try {
+	    MapView map = glob.sess.ui.gui.map;
+	    map.click(this, 1, Coord.z);
+	} catch (Exception ignored) {}
+    }
     
     public void itemact() {
 	try {
@@ -472,6 +482,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	Moving m = getattr(Moving.class);
 	Coord3f ret = (m != null)?m.getc():getrc();
 	DrawOffset df = getattr(DrawOffset.class);
+	if(CFG.FLATWORLD.get()) { ret.z = 0; }
 	if(df != null)
 	    ret = ret.add(df.off);
 	return(ret);
@@ -848,6 +859,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    if(flwxf == null) {
 			Coord3f oc = Gob.this.getc();
 			Coord3f rc = new Coord3f(oc);
+			if(CFG.FLATWORLD.get()) { rc.z = 0; }
 			rc.y = -rc.y;
 			this.flw = null;
 			this.oc = oc;
@@ -972,6 +984,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 	h.start();
     }
+    public void highlightFoe(int tgt) {
+        FoeHighlight h = getattr(FoeHighlight.class);
+        if (h == null) {
+            h = new FoeHighlight(this, tgt);
+            setattr(h);
+            
+	}
+    }
     
     public String tooltip() {
 	String tt = null;
@@ -991,7 +1011,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if(hitboxEnabled) {
 	    if(hitbox != null) {
 		if(!hitbox.show(true)) {
-		    hitbox.fx.updateState();
+		    hitbox.fx.updateState(); // TODO NOT STATE BUT CHANGE HITBOX
 		}
 	    } else if(!virtual || this instanceof MapView.Plob) {
 		Hitbox hitbox = Hitbox.forGob(this);
@@ -1005,31 +1025,75 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
     }
     
+    private static void addLoopedVertices(List<Float> target, List<Coord3f> vertices) {
+	int n = vertices.size();
+	for (int i = 0; i < n; i++) {
+	    Coord3f a = vertices.get(i);
+	    Coord3f b = vertices.get((i + 1) % n);
+	    Collections.addAll(target, a.x, a.y, a.z);
+	    Collections.addAll(target, b.x, b.y, b.z);
+	}
+    }
+//
+    private static float[] convert(List<Float> list) {
+	float[] ret = new float[list.size()];
+	int i = 0;
+	for (Float value : list) {
+	    ret[i++] = value;
+	}
+	return ret;
+    }
+
     private boolean updateVisibility() {
-	if(anyOf(GobTag.TREE, GobTag.BUSH)) {
+	if(anyOf(GobTag.TREE, GobTag.BUSH, GobTag.PALISADE, GobTag.LOG)) {
 	    Drawable d = drawable;
+//	    short[] ind = {0,1,3,1,2,3};
+//	    List<Coord3f> listik = new LinkedList<>();
+//	    listik.add(new Coord3f( (float)-this.rc.x, (float)-this.rc.y, 0.0f));
+//	    listik.add(new Coord3f((float)-this.rc.x,(float)this.rc.y, 0.0f));
+//	    listik.add(new Coord3f((float)this.rc.x,(float)this.rc.y, 0.0f));
+//	    listik.add(new Coord3f((float)this.rc.x,(float)-this.rc.y
+//		, 0.0f));
+//	    listik.add(new Coord3f(-1,-1, 0.0f));
+//	    listik.add(new Coord3f(-1,1, 0.0f));
+//	    listik.add(new Coord3f(1,1, 0.0f));
+//	    listik.add(new Coord3f(1,-1, 0.0f));
+//	    List<Float> vertices = new LinkedList<>();
+//	    addLoopedVertices(vertices, listik);
+//	    float[] data = convert(vertices);
+//	    float[] data = {
+//		3f, 3f, 0.1f, // top right
+//		3f, -3f, 0.1f, // bottom right
+//		-3f, -3f, 0.1f, // bottom left
+//		-3f, 3f, 0.1f};
+//	    VertexBuf.VertexData coord = new VertexBuf.VertexData(FloatBuffer.wrap(data));
+//	    RenderTree.Node SquareSlot = new FastMesh(new VertexBuf(), ind);
 	    Boolean needHide = CFG.HIDE_TREES.get();
 	    if(d != null && d.skipRender != needHide) {
 		d.skipRender = needHide;
 		if(needHide) {
+		    tag(GobTag.HIDDEN);
+//		    this.setattr(new imafuckingtool(this));
 		    if(d.slots != null) {
 			ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(d.slots);
 			glob.loader.defer(() -> RUtils.multiremSafe(tmpSlots), null);
+//			glob.loader.defer(() -> RUtils.multiadd(tmpSlots, SquareSlot), null); // TODO  COORD
+//			this.setattr(new GobColor(this));
 		    }
 		} else {
 		    ArrayList<RenderTree.Slot> tmpSlots = new ArrayList<>(slots);
 		    glob.loader.defer(() -> RUtils.multiadd(tmpSlots, d), null);
+//		    this.delattr(GobColor.class);
+//		    this.delattr(imafuckingtool.class);
+		    untag(GobTag.HIDDEN);
 		}
+	    	return true;
 	    }
-	    if(needHide) {
-		tag(GobTag.HIDDEN);
-	    } else {
-	        untag(GobTag.HIDDEN);
-	    }
-	    return true;
 	}
 	return false;
     }
+    
+    
     
     private void updateIcon() {
 	if(getattr(GobIcon.class) == null) {
@@ -1104,6 +1168,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	return null;
     }
     
+    public boolean isFriend() {
+	synchronized (glob.party.memb) {
+	    for (Party.Member m : glob.party.memb.values()) {
+		if (m.gobid == id)
+		    return true;
+	    }
+	}
+	
+	KinInfo kininfo = getattr(KinInfo.class);
+	if (kininfo == null || kininfo.group == 2 /*red*/)
+	    return false;
+	
+	return true;
+    }
     //Useful for getting stage information or model type
     public int sdt() {
         Drawable d = drawable;
@@ -1193,19 +1271,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     private void updateColor() {
 	Color c = null;
 	if(CFG.DISPLAY_GOB_INFO.get()) {
-	    if(is(GobTag.DRACK)) {
-		if(is(GobTag.EMPTY)) {
-		    c = COL_EMPTY;
-		} else if(is(GobTag.READY)) {
-		    c = COL_READY;
-		}
-	    }
-	    if(CFG.SHOW_CONTAINER_FULLNESS.get() && is(GobTag.CONTAINER)) {
-		if(is(GobTag.EMPTY)) {
-		    c = COL_EMPTY;
-		} else if(is(GobTag.FULL)) {
-		    c = COL_FULL;
-		}
+	    if(is(GobTag.EMPTY)) {
+		c = COL_EMPTY;
+	    } else if(is(GobTag.READY)) {
+		c = COL_READY;
 	    }
 	}
 	if(customColor.color(c)) {updstate();}

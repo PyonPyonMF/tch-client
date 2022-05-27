@@ -55,11 +55,21 @@ public class Partyview extends Widget {
 	party = ui.sess.glob.party;
 	update();
     }
+    
+    public boolean hasParty() {
+        if (this.party != null) {
+            return true;
+	}
+        else return false;
+    }
 	
     private void update() {
 	if(party.memb != om) {
 	    Collection<Member> old = new HashSet<Member>(avs.keySet());
 	    for(final Member m : (om = party.memb).values()) {
+	        Gob gob = m.getgob();
+		if (CFG.PARTY_HIGHLIGHT.get() && om.size() > 1)
+		    gob.highlightFoe(3);
 		if(m.gobid == ign)
 		    continue;
 		Avaview w = avs.get(m);
@@ -85,6 +95,7 @@ public class Partyview extends Widget {
 	    }
 	    for(Member m : old) {
 		ui.destroy(avs.get(m));
+		m.getgob().delattr(FoeHighlight.class);
 		avs.remove(m);
 	    }
 	    List<Map.Entry<Member, Avaview>> wl = new ArrayList<Map.Entry<Member, Avaview>>(avs.entrySet());

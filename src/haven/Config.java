@@ -66,6 +66,9 @@ public class Config {
     public static byte[] authck = getbytes("haven.authck", null), inittoken = getbytes("haven.inittoken", null);
     public static String prefspec = getprop("haven.prefspec", "hafen");
     public static final String confid = "ender";
+//    public static boolean cleavesound = Utils.getprefb("cleavesound", true);
+//    public static String cleavesfx = Utils.getpref("cleavesfx", "sfx/water");
+//    public static double cleavesoundvol = Utils.getprefd("cleavesoundvol", 0.7);
     
     public static String version;
     public static final boolean isUpdate;

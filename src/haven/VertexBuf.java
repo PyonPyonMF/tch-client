@@ -97,6 +97,21 @@ public class VertexBuf {
 	this.dbuf = new VertexArray.Buffer(fmt.inputs[0].stride * num, DataBuffer.Usage.STATIC, this::fill).shared().desc(this);
 	return(new VertexArray(fmt, dbuf).shared().desc(this));
     }
+    
+    protected VertexArray fmtdata2() {
+	Layout fmt = new VertexArray.Layout(new VertexArray.Layout.Input(Homo3D.vertex, new VectorFormat(3, NumberFormat.FLOAT32), 0, 0, 12));
+	this.dbuf = new VertexArray.Buffer(fmt.inputs[0].stride * num, DataBuffer.Usage.STATIC, this::fill).shared();
+	return(new VertexArray(fmt, dbuf).shared());
+    }
+    public VertexArray data2() {
+	if(data == null) {
+	    synchronized(this) {
+		if(data == null)
+		    data = fmtdata2();
+	    }
+	}
+	return(data);
+    }
 
     public VertexArray data() {
 	if(data == null) {

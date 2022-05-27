@@ -572,6 +572,9 @@ public class Audio {
     public static void play(Resource res) {
 	play(fromres(res));
     }
+    public static void play(Resource res, double vol) {
+	play(new Audio.VolAdjust(fromres(res), vol));
+    }
 
     public static void main(String[] args) throws Exception {
 	Collection<Monitor> clips = new LinkedList<Monitor>();

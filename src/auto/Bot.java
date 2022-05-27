@@ -4,21 +4,27 @@ import haven.*;
 import haven.rx.Reactor;
 import rx.functions.Action1;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.*;
 
 
 public class Bot implements Defer.Callable<Void> {
     private static final Object lock = new Object();
     private static Bot current;
-    private final List<Target> targets;
+    private UI ui;
+    private  static List<Target> targets;
     private final BotAction[] actions;
+    private static long gobidHighlight;
     private Defer.Future<Void> task;
     private boolean cancelled = false;
     private static final Object waiter = new Object();
-    
+    private static boolean newtarget = false;
     public Bot(List<Target> targets, BotAction... actions) {
 	this.targets = targets;
 	this.actions = actions;
@@ -26,7 +32,7 @@ public class Bot implements Defer.Callable<Void> {
     
     @Override
     public Void call() throws InterruptedException {
-	targets.forEach(Target::highlight);
+//	targets.forEach(Target::highlight);
 	for (Target target : targets) {
 	    for (BotAction action : actions) {
 		if(target.disposed()) {break;}
@@ -85,7 +91,6 @@ public class Bot implements Defer.Callable<Void> {
     public static void pickup(GameUI gui, Predicate<Gob> filter) {
 	pickup(gui, filter, Integer.MAX_VALUE);
     }
-    
     public static void pickup(GameUI gui, Predicate<Gob> filter, int limit) {
 	List<Target> targets = gui.ui.sess.glob.oc.stream()
 	    .filter(filter)
@@ -100,6 +105,23 @@ public class Bot implements Defer.Callable<Void> {
 	    Target::rclick,
 	    selectFlower("Pick"),
 	    target -> target.gob.waitRemoval()
+	), gui.ui);
+    }
+//    public static void CloseDoor(GameUI gui) {
+//	CloseDoor(gui, filter);
+//    }
+    // TODO MOUNT  HORSE
+    public static void CloseDoor(GameUI gui) {
+	List<Target> targets = gui.ui.sess.glob.oc.stream()
+	    .filter(has(GobTag.DOOR))
+	    .filter(not(has(GobTag.VISITORGATE)))
+	    .sorted(byDistance)
+	    .limit(1)
+	    .map(Target::new)
+	    .collect(Collectors.toList());
+	
+	start(new Bot(targets,
+	    Target::rclick
 	), gui.ui);
     }
     
@@ -147,6 +169,19 @@ public class Bot implements Defer.Callable<Void> {
 	    start(new Bot(targets, fuelWith(gui, fuel, count)), gui.ui);
 	}
     }
+    public static void MountHorse(GameUI gui) {
+	List<Target> targets = gui.ui.sess.glob.oc.stream()
+	    .filter(has(GobTag.HORSE))
+	    .sorted(byDistance)
+	    .limit(1)
+	    .map(Target::new)
+	    .collect(Collectors.toList());
+    
+	start(new Bot(targets,
+	    Target::rclick,
+	    selectFlower("Giddyup!")
+	), gui.ui);
+    }
     
     private static List<Target> getNearestTargets(GameUI gui, String name, int limit) {
 	return gui.ui.sess.glob.oc.stream()
@@ -156,6 +191,89 @@ public class Bot implements Defer.Callable<Void> {
 	    .limit(limit)
 	    .map(Target::new)
 	    .collect(Collectors.toList());
+    }
+    private static List<Target> getNearestPlayers(GameUI gui) {
+        return  gui.ui.sess.glob.oc.stream()
+	    .filter(gobIs("body"))
+	    .filter(gob -> distanceToPlayer(gob) <= 600)
+	    .filter(gob -> distanceToPlayer(gob) != 0)
+	    .filter(has(GobTag.FOE))
+	    .sorted(byDistance)
+	    .limit(1)
+	    .map(Target::new)
+	    .collect(Collectors.toList());
+	
+    }
+    private static List<Target> getPlayerByKin(GameUI gui) {
+	return  gui.ui.sess.glob.oc.stream()
+	    .filter(gobIs("body"))
+	    .filter(has(GobTag.FOE))
+	    .filter(GobKin("ozzy"))
+	    .map(Target::new)
+	    .collect(Collectors.toList());
+    }
+    
+    
+    private static List<Target> getHighlightedPlayer(GameUI gui) {
+	return  gui.ui.sess.glob.oc.stream()
+	    .filter(gobIs("body"))
+	    .filter(has(GobTag.FOE))
+	    .filter(GobHighlighted(gobidHighlight))
+	    .limit(1)
+	    .map(Target::new)
+	    .collect(Collectors.toList());
+    }
+    
+    public static void needtoHigh(long gobid) {
+	gobidHighlight = gobid;
+    
+    }
+    private static BotAction AggroClosest(GameUI gui) {
+        return foe -> {
+	    gui.act("aggro");
+	    foe.lclick();
+	    foe.rclick();
+	    foe.highlight();
+	};
+	
+    }
+    private static BotAction AggroHighlighted(GameUI gui) {
+        return foe -> {
+            gui.act("aggro");
+            foe.lclick();
+            foe.rclick();
+	};
+    }
+    
+    private static BotAction AggroByKin(GameUI gui) {
+        return foe -> {
+	    gui.act("aggro");
+	    foe.lclick();
+	    foe.rclick();
+	    foe.highlight();
+	};
+    }
+    
+    
+    public static void AggroByHighlightGob(GameUI gui) {
+	List<Target> target = getHighlightedPlayer(gui);
+	if(target != null) {
+	    start(new Bot(target, AggroHighlighted(gui)), gui.ui);
+	}
+    }
+    
+    public static void AggroByKinGob(GameUI gui) {
+        List<Target> target = getPlayerByKin(gui);
+        if(target != null) {
+            start(new Bot(target, AggroByKin(gui)), gui.ui);
+	}
+    }
+    public static void  AggroClosestGob(GameUI gui) {
+	    List<Target> players = getNearestPlayers(gui);
+	    if(!players.isEmpty()) {
+		start(new Bot(players, AggroClosest(gui)), gui.ui);
+	    }
+	    
     }
     
     private static BotAction fuelWith(GameUI gui, String fuel, int count) {
@@ -279,6 +397,24 @@ public class Bot implements Defer.Callable<Void> {
 	};
     }
     
+    private static Predicate<Gob> GobHighlighted(long gobid) {
+        return gid -> {
+            if (gid != null) { return gid.id == gobid; }
+            return false;
+	};
+    }
+    
+    private static Predicate<Gob> GobKin(String name) {
+        return g -> {
+            KinInfo kin = g.getattr(KinInfo.class);
+            if (kin == null) { return false; }
+            String hisname = kin.name;
+            if (hisname == null) { return false; }
+            return hisname.contains(name);
+        
+	};
+    }
+    
     private static float countItems(String what, Supplier<List<WItem>> where) {
 	return where.get().stream()
 	    .filter(wItem -> wItem.is(what))
@@ -392,6 +528,12 @@ public class Bot implements Defer.Callable<Void> {
 	    if(!disposed()) {
 		if(gob != null) {gob.rclick();}
 		if(item != null) {item.rclick();}
+	    }
+	}
+	public void lclick() {
+	    if(!disposed()) {
+		if(gob != null) {gob.lclick();}
+//		if(item != null) {item.rclick();}
 	    }
 	}
     

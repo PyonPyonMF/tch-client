@@ -26,6 +26,8 @@
 
 package haven;
 
+import auto.Bot;
+
 import java.io.*;
 import java.util.*;
 import java.awt.Color;
@@ -39,6 +41,8 @@ import java.text.AttributedCharacterIterator.Attribute;
 import java.net.URL;
 import java.util.regex.*;
 import java.awt.datatransfer.*;
+
+import static auto.Bot.*;
 
 public class ChatUI extends Widget {
     public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(UI.scale(12f)), TextAttribute.FOREGROUND, Color.BLACK));
@@ -142,15 +146,35 @@ public class ChatUI extends Widget {
 	private final Scrollbar sb;
 	private final IButton cb;
 	public int urgency = 0;
+	private Bot bot;
 	private PrintWriter log;
-	
+ 
+ 
 	public boolean process(String msg) {
+	    Pattern highlight = Pattern.compile("^@(-?\\d+)$");
+	    Matcher matcher = highlight.matcher(msg);
+	    if(matcher.matches()){
+		try {
+		    Gob gob = ui.gui.map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
+		    if (gob != null) {
+			gob.highlight();
+			return false;
+		    }
+		} catch (Exception ignored){}
+	    }
+	    return true;
+	}
+	
+	public boolean process(String msg, int ChatType) {
 	    Pattern highlight = Pattern.compile("^@(-?\\d+)$");
 	    Matcher matcher = highlight.matcher(msg);
 	    if(matcher.matches()){
 	        try {
 		    Gob gob = ui.gui.map.glob.oc.getgob(Long.parseLong(matcher.group(1)));
 		    if (gob != null) {
+		        if (ChatType == 1) {
+		        if (gob.is(GobTag.FOE)) {
+			needtoHigh(gob.id); } }
 		        gob.highlight();
 		    	return false;
 		    }
@@ -848,13 +872,12 @@ public class ChatUI extends Widget {
 	public PartyChat() {
 	    super(false, "Party", 2);
 	}
-
 	public void uimsg(String msg, Object... args) {
 	    if(msg == "msg") {
 		Integer from = (Integer)args[0];
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
-		if(process(line)) {
+		if(process(line, 1)) {
 		    Color col = Color.WHITE;
 		    synchronized (ui.sess.glob.party.memb) {
 			Party.Member pm = ui.sess.glob.party.memb.get(gobid);

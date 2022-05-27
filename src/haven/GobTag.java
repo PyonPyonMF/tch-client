@@ -8,6 +8,10 @@ public enum GobTag {
     TREE, BUSH, LOG, STUMP, HERB,
     ANIMAL, AGGRESSIVE, CRITTER,
     
+    PALISADE,
+    DOOR,
+    VISITORGATE,
+    
     MIDGES,
     
     DOMESTIC, YOUNG, ADULT,
@@ -92,7 +96,14 @@ public enum GobTag {
                 }
             } else if(name.startsWith("gfx/terobjs/bushes")) {
                 tags.add(BUSH);
-            } else if(name.startsWith("gfx/terobjs/herbs/") || ofType(name, LIKE_HERB)) {
+            } else if(name.startsWith("gfx/terobjs/arch/palisadeseg")) {
+                tags.add(PALISADE);
+            }  else if(name.contains("gate")) {
+                
+                boolean visitor = ols.stream().noneMatch(GobTag::isVisitor); if (!visitor) {
+                tags.add(VISITORGATE); }
+                tags.add(DOOR);
+            }else if(name.startsWith("gfx/terobjs/herbs/") || ofType(name, LIKE_HERB)) {
                 tags.add(HERB);
             } else if(name.startsWith("gfx/borka/body")) {
                 tags.add(PLAYER);
@@ -178,6 +189,10 @@ public enum GobTag {
     
     private static boolean isDrying(String ol) {
         return ol.endsWith("-blood") || ol.endsWith("-windweed") || ol.endsWith("-fishraw");
+    }
+    
+    private static boolean isVisitor(String ol) {
+        return ol.contains("visflag");
     }
     
     public static boolean ofType(String name, String[] patterns) {

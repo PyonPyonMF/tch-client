@@ -75,7 +75,7 @@ public class Utils {
 		}
 	    });
     }
-
+	
     static void drawgay(BufferedImage t, BufferedImage img, Coord c) {
 	Coord sz = imgsz(img);
 	for(int y = 0; y < sz.y; y++) {
@@ -101,38 +101,24 @@ public class Utils {
 	return(base);
     }
 
-    public static Path srcpath(Class<?> cl) {
-	java.security.ProtectionDomain d = cl.getProtectionDomain();
-	if(d == null) throw(new IllegalArgumentException(String.valueOf(cl) + " has no prortection domain"));
-	java.security.CodeSource s = d.getCodeSource();
-	if(s == null) throw(new IllegalArgumentException(String.valueOf(cl) + " has no code source"));
-	URL url = s.getLocation();
-	if(url == null) throw(new IllegalArgumentException(String.valueOf(cl) + " has no location"));
-	try {
-	    return(Paths.get(url.toURI()));
-	} catch(java.net.URISyntaxException e) {
-	    throw(new IllegalArgumentException(String.valueOf(cl) + " has a malformed location", e));
-	}
-    }
-
     public static int drawtext(Graphics g, String text, Coord c) {
 	java.awt.FontMetrics m = g.getFontMetrics();
 	g.drawString(text, c.x, c.y + m.getAscent());
 	return(m.getHeight());
     }
-
+	
     static Coord textsz(Graphics g, String text) {
 	java.awt.FontMetrics m = g.getFontMetrics();
 	java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
 	return(new Coord((int)ts.getWidth(), (int)ts.getHeight()));
     }
-
+	
     static void aligntext(Graphics g, String text, Coord c, double ax, double ay) {
 	java.awt.FontMetrics m = g.getFontMetrics();
 	java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
 	g.drawString(text, (int)(c.x - ts.getWidth() * ax), (int)(c.y + m.getAscent() - ts.getHeight() * ay));
     }
-
+    
     public static String fpformat(int num, int div, int dec) {
 	StringBuilder buf = new StringBuilder();
 	boolean s = false;
@@ -183,7 +169,7 @@ public class Utils {
 	buf.append(dp);
 	return(buf.toString());
     }
-
+    
     public static String odformat2(double num, int md) {
 	if(num < 0)
 	    return("-" + odformat2(-num, md));
@@ -212,7 +198,7 @@ public class Utils {
     static void line(Graphics g, Coord c1, Coord c2) {
 	g.drawLine(c1.x, c1.y, c2.x, c2.y);
     }
-
+	
     static void AA(Graphics g) {
 	java.awt.Graphics2D g2 = (java.awt.Graphics2D)g;
 	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);		
@@ -240,7 +226,7 @@ public class Utils {
 	return((raw - 186) * (1.0 / 31.0));
     }
 
-    public static synchronized Preferences prefs() {
+    static synchronized Preferences prefs() {
 	if(prefs == null) {
 	    Preferences node = Preferences.userNodeForPackage(Utils.class);
 	    if(Config.prefspec != null)
@@ -250,67 +236,67 @@ public class Utils {
 	return(prefs);
     }
 
-    public static String getpref(String prefname, String def) {
+    static String getpref(String prefname, String def) {
 	try {
 	    return(prefs().get(prefname, def));
 	} catch(SecurityException e) {
 	    return(def);
 	}
     }
-
-    public static void setpref(String prefname, String val) {
+	
+    static void setpref(String prefname, String val) {
 	try {
 	    prefs().put(prefname, val);
 	} catch(SecurityException e) {
 	}
     }
-
-    public static int getprefi(String prefname, int def) {
+    
+    static int getprefi(String prefname, int def) {
 	try {
 	    return(prefs().getInt(prefname, def));
 	} catch(SecurityException e) {
 	    return(def);
 	}
     }
-
-    public static void setprefi(String prefname, int val) {
+    
+    static void setprefi(String prefname, int val) {
 	try {
 	    prefs().putInt(prefname, val);
 	} catch(SecurityException e) {
 	}
     }
 
-    public static double getprefd(String prefname, double def) {
+    static double getprefd(String prefname, double def) {
 	try {
 	    return(prefs().getDouble(prefname, def));
 	} catch(SecurityException e) {
 	    return(def);
 	}
     }
-
-    public static void setprefd(String prefname, double val) {
+    
+    static void setprefd(String prefname, double val) {
 	try {
 	    prefs().putDouble(prefname, val);
 	} catch(SecurityException e) {
 	}
     }
 
-    public static boolean getprefb(String prefname, boolean def) {
+    static boolean getprefb(String prefname, boolean def) {
 	try {
 	    return(prefs().getBoolean(prefname, def));
 	} catch(SecurityException e) {
 	    return(def);
 	}
     }
-
-    public static void setprefb(String prefname, boolean val) {
+    
+    static void setprefb(String prefname, boolean val) {
 	try {
 	    prefs().putBoolean(prefname, val);
 	} catch(SecurityException e) {
 	}
     }
 
-    public static Coord getprefc(String prefname, Coord def) {
+    static Coord getprefc(String prefname, Coord def) {
 	try {
 	    String val = prefs().get(prefname, null);
 	    if(val == null)
@@ -323,63 +309,29 @@ public class Utils {
 	    return(def);
 	}
     }
-
-    public static void setprefc(String prefname, Coord val) {
+    
+    static void setprefc(String prefname, Coord val) {
 	try {
 	    prefs().put(prefname, val.x + "x" + val.y);
 	} catch(SecurityException e) {
 	}
     }
 
-    public static byte[] getprefb(String prefname, byte[] def) {
+    static byte[] getprefb(String prefname, byte[] def) {
 	try {
 	    return(prefs().getByteArray(prefname, def));
 	} catch(SecurityException e) {
 	    return(def);
 	}
     }
-
-    public static void setprefb(String prefname, byte[] val) {
+	
+    static void setprefb(String prefname, byte[] val) {
 	try {
 	    prefs().putByteArray(prefname, val);
 	} catch(SecurityException e) {
 	}
     }
-
-    public static List<String> getprefsl(String prefname, String[] def) {
-	byte[] enc = getprefb(prefname, null);
-	if(enc == null)
-	    return((def == null) ? null : Arrays.asList(def));
-	ByteBuffer buf = ByteBuffer.wrap(enc);
-	ArrayList<String> ret = new ArrayList<>();
-	for(int i = 0, s = 0; i < buf.capacity(); i++) {
-	    if(buf.get(i) == 0) {
-		((Buffer) buf).position(s);
-		((Buffer) buf).limit(i);
-		CharBuffer dec = utf8.decode(buf);
-		ret.add(dec.toString());
-		s = i + 1;
-		((Buffer) buf).limit(buf.capacity());
-	    }
-	}
-	ret.trimToSize();
-	return(ret);
-    }
-
-    public static void setprefsl(String prefname, Iterable<? extends CharSequence> val) {
-	ByteBuffer buf = ByteBuffer.allocate(1024);
-	for(CharSequence str : val) {
-	    ByteBuffer enc = utf8.encode(CharBuffer.wrap(str));
-	    buf = growbuf(buf, enc.remaining() + 1);
-	    buf.put(enc);
-	    buf.put((byte)0);
-	}
-	((Buffer) buf).flip();
-	byte[] enc = new byte[buf.remaining()];
-	buf.get(enc);
-	setprefb(prefname, enc);
-    }
-
+    
     public static String getprop(String propname, String def) {
 	try {
 	    String ret;
@@ -391,10 +343,6 @@ public class Utils {
 	} catch(SecurityException e) {
 	    return(def);
 	}
-    }
-
-    public static int sb(int n, int b) {
-	return((n << (32 - b)) >> (32 - b));
     }
 
     public static int ub(byte b) {
@@ -420,22 +368,22 @@ public class Utils {
     public static int uint16d(byte[] buf, int off) {
 	return(ub(buf[off]) | (ub(buf[off + 1]) << 8));
     }
-
+	
     public static int int16d(byte[] buf, int off) {
 	return((int)(short)uint16d(buf, off));
     }
-
+	
     public static long uint32d(byte[] buf, int off) {
 	return((long)ub(buf[off]) | ((long)ub(buf[off + 1]) << 8) | ((long)ub(buf[off + 2]) << 16) | ((long)ub(buf[off + 3]) << 24));
     }
-
+	
     public static void uint32e(long num, byte[] buf, int off) {
 	buf[off] = (byte)(num & 0xff);
 	buf[off + 1] = (byte)((num & 0x0000ff00) >> 8);
 	buf[off + 2] = (byte)((num & 0x00ff0000) >> 16);
 	buf[off + 3] = (byte)((num & 0xff000000) >> 24);
     }
-
+	
     public static int int32d(byte[] buf, int off) {
 	return((int)uint32d(buf, off));
     }
@@ -493,7 +441,7 @@ public class Utils {
 	off[0] = i + 1;
 	return(ret);
     }
-
+    
     public static double floatd(byte[] buf, int off) {
 	int e = buf[off];
 	long t = uint32d(buf, off + 1);
@@ -666,7 +614,13 @@ public class Utils {
 	else
 	    return((char)('A' + num - 10));
     }
-
+    
+    
+    public static String fmt1DecPlace(double value) {
+	double rvalue = (double) Math.round(value * 10) / 10;
+	return (rvalue % 1 == 0) ? Integer.toString((int) rvalue) : Double.toString(rvalue);
+    }
+	
     static int hex2num(char hex) {
 	if((hex >= '0') && (hex <= '9'))
 	    return(hex - '0');
@@ -695,7 +649,7 @@ public class Utils {
 	    ret[o] = (byte)((hex2num(hex.charAt(i)) << 4) | hex2num(hex.charAt(i + 1)));
 	return(ret);
     }
-
+    
     private final static String base64set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     private final static int[] base64rev;
     static {
@@ -750,7 +704,7 @@ public class Utils {
 	}
 	return(buf.toByteArray());
     }
-
+	
     public static String[] splitwords(String text) {
 	ArrayList<String> words = new ArrayList<String>();
 	StringBuilder buf = new StringBuilder();
@@ -805,7 +759,7 @@ public class Utils {
 	    return(null);
 	return(words.toArray(new String[0]));
     }
-
+	
     public static String[] splitlines(String text) {
 	ArrayList<String> ret = new ArrayList<String>();
 	int p = 0;
@@ -828,7 +782,7 @@ public class Utils {
 	    return(0);
 	}
     }
-
+    
     static void readtileof(InputStream in) throws IOException {
         byte[] buf = new byte[4096];
         while(true) {
@@ -836,7 +790,7 @@ public class Utils {
                 return;
         }
     }
-
+    
     public static byte[] readall(InputStream in) throws IOException {
 	byte[] buf = new byte[4096];
 	int off = 0;
@@ -1037,7 +991,7 @@ public class Utils {
     public static String titlecase(String str) {
 	return(Character.toTitleCase(str.charAt(0)) + str.substring(1));
     }
-
+    
     public static Color contrast(Color col) {
 	int max = Math.max(col.getRed(), Math.max(col.getGreen(), col.getBlue()));
 	if(max > 128) {
@@ -1068,7 +1022,7 @@ public class Utils {
                          ((col & 0x00f0) >>  4) * 17,
                          ((col & 0x000f) >>  0) * 17));
     }
-
+    
     public static BufferedImage outline(BufferedImage img, Color col) {
 	return outline(img, col, false);
     }
@@ -1124,7 +1078,7 @@ public class Utils {
 	else
 	    return(a / b);
     }
-
+    
     public static int floormod(int a, int b) {
 	int r = a % b;
 	if(r < 0)
@@ -1145,7 +1099,7 @@ public class Utils {
 	double q = a / b;
 	return((q < 0)?(((int)q) - 1):((int)q));
     }
-
+    
     public static float floormod(float a, float b) {
 	float r = a % b;
 	return((a < 0)?(r + b):r);
@@ -1178,7 +1132,7 @@ public class Utils {
 	    return(max);
 	return(d);
     }
-
+    
     public static float clip(float d, float min, float max) {
 	if(d < min)
 	    return(min);
@@ -1186,7 +1140,7 @@ public class Utils {
 	    return(max);
 	return(d);
     }
-
+    
     public static int clip(int i, int min, int max) {
 	if(i < min)
 	    return(min);
@@ -1300,7 +1254,7 @@ public class Utils {
 	oout.writeObject(obj);
 	oout.flush();
     }
-
+    
     public static byte[] serialize(Object obj) {
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
 	try {
@@ -1310,7 +1264,7 @@ public class Utils {
 	}
 	return(out.toByteArray());
     }
-
+    
     public static Object deserialize(InputStream in) throws IOException {
 	ObjectInputStream oin = new ObjectInputStream(in);
 	try {
@@ -1319,7 +1273,7 @@ public class Utils {
 	    return(null);
 	}
     }
-
+    
     public static Object deserialize(byte[] buf) {
 	if(buf == null)
 	    return(null);
@@ -1330,7 +1284,7 @@ public class Utils {
 	    return(null);
 	}
     }
-
+    
     public static boolean parsebool(String s) {
 	if(s == null)
 	    throw(new IllegalArgumentException(s));
@@ -1352,7 +1306,7 @@ public class Utils {
 	    return(def);
 	}
     }
-
+    
     /* Just in case anyone doubted that Java is stupid. :-/ */
     public static FloatBuffer bufcp(float[] a) {
 	FloatBuffer b = mkfbuf(a.length);
@@ -1455,7 +1409,7 @@ public class Utils {
 		((float)c.getAlpha() / 255.0f)
 	    });
     }
-
+    
     @SuppressWarnings("unchecked")
     public static <T> T[] mkarray(Class<T> cl, int len) {
 	return((T[])Array.newInstance(cl, len));
@@ -1517,7 +1471,7 @@ public class Utils {
     public static <T> T[] extend(T[] src, int nl) {
 	return(extend(src, 0, nl));
     }
-
+    
     public static <T, E extends T> T[] extend(T[] src, E ne) {
 	T[] ret = extend(src, 0, src.length + 1);
 	ret[src.length] = ne;
@@ -1535,25 +1489,25 @@ public class Utils {
 	System.arraycopy(src, 0, dst, 0, Math.min(src.length, dst.length));
 	return(dst);
     }
-
+    
     public static double[] extend(double[] src, int nl) {
 	double[] dst = new double[nl];
 	System.arraycopy(src, 0, dst, 0, Math.min(src.length, dst.length));
 	return(dst);
     }
-
+    
     public static float[] extend(float[] src, int nl) {
 	float[] dst = new float[nl];
 	System.arraycopy(src, 0, dst, 0, Math.min(src.length, dst.length));
 	return(dst);
     }
-
+    
     public static short[] extend(short[] src, int nl) {
 	short[] dst = new short[nl];
 	System.arraycopy(src, 0, dst, 0, Math.min(src.length, dst.length));
 	return(dst);
     }
-
+    
     public static <T> T el(Iterable<T> c) {
 	Iterator<T> i = c.iterator();
 	if(!i.hasNext()) return(null);

@@ -93,12 +93,26 @@ public class Fightview extends Widget {
 	public void use(Indir<Resource> act) {
 	    lastact = act;
 	    lastuse = Utils.rtime();
+//	    if (lastact != null) {
+//		if (lastact.get().basename().contains("cleave") && Config.cleavesound) {
+//		    try {
+//			Audio.play(Resource.local().loadwait(Config.cleavesfx), Config.cleavesoundvol);
+//		    } catch (Exception e) {
+//		    }//ignore because a crash here would prob get someone killed
+//		} }
 	}
     }
 
     public void use(Indir<Resource> act) {
 	lastact = act;
 	lastuse = Utils.rtime();
+//	if (lastact != null) {
+//	    if (lastact.get().basename().contains("cleave") && Config.cleavesound) {
+//		try {
+//		    Audio.play(Resource.local().loadwait(Config.cleavesfx), Config.cleavesoundvol);
+//		} catch (Exception e) {
+//		}//ignore because a crash here would prob get someone killed
+//	    } }
     }
     
     @RName("frv")

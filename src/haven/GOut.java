@@ -234,9 +234,19 @@ public class GOut {
 	aimage(T, c, ax, ay);
 	T.dispose();
     }
+    
+    public void atext(String text, Coord c, double ax, double ay, Text.Foundry font) {
+	Text t = Text.renderstroked(text, font);
+	Tex T = t.tex();
+	aimage(T, c, ax, ay);
+	T.dispose();
+    }
 
     public void text(String text, Coord c) {
 	atext(text, c, 0, 0);
+    }
+    public void text(String text, Coord c, Text.Foundry font) {
+	atext(text, c, 0, 0, font);
     }
 
     public void drawp(Model.Mode mode, float[] data, int n) {
@@ -261,6 +271,17 @@ public class GOut {
 			c2.x + tx.x + 0.5f, c2.y + tx.y + 0.5f};
 	drawp(Model.Mode.LINES, data);
     }
+    
+//    public void cube(Coord ul, Coord sz, int w, int h) {
+//	    usestate(new States.Qube(ul, sz, w, h));
+//        float[] data = {ul.x, sz.x,
+//	    ul.x, sz.x + h,
+//	    ul.x + w, sz.x + h,
+//	    ul.x + w, sz.x,
+//	};
+//        drawp(Model.Mode.QUBE, data);
+//
+//    }
     
     public void clippedLine(Coord c1, Coord c2, double w) {
 	Pair<Coord, Coord> clipped = Utils.clipLine(c1, c2, Coord.z, sz());

@@ -1167,7 +1167,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    throw(new UI.UIException("Illegal gameui child", place, args));
 	}
     }
-
     public void cdestroy(Widget w) {
 	if(w instanceof Window) {
 	    String wndid = wndids.reverse().get((Window)w);
@@ -1428,9 +1427,16 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    String cur = polowners.get(id);
 	    if(map != null) {
 		if((o != null) && (cur == null)) {
-		    map.setpoltext(id, "Entering " + o);
+		    if(CFG.ENTERING_MSG_IN_CHAT.get()) {
+			ui.message(String.format("Entering %s", o), MsgType.GOOD);
+		    }
+		    else map.setpoltext(id, "Entering " + o);
 		} else if((o == null) && (cur != null)) {
-		    map.setpoltext(id, "Leaving " + cur);
+		    if(CFG.ENTERING_MSG_IN_CHAT.get()) {
+			ui.message(String.format("Leaving %s", cur), MsgType.GOOD);
+		    }
+		    else map.setpoltext(id, "Leaving " + cur);
+//		    ui.message(String.format("Leaving %s", cur), MsgType.GOOD);
 		}
 	    }
 	    polowners.put(id, o);
@@ -2047,4 +2053,27 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }
+    
+    public List<IMeter.Meter> getmeters(String name) {
+	for (Widget meter : meters) {
+	    if (meter instanceof IMeter) {
+		IMeter im = (IMeter) meter;
+		try {
+		    Resource res = im.bg.get();
+		    if (res != null && res.basename().equals(name))
+			return im.meters;
+		} catch (Loading l) {
+		}
+	    }
+	}
+	return null;
+    }
+    
+    public IMeter.Meter getmeter(String name, int midx) {
+	List<IMeter.Meter> meters = getmeters(name);
+	if (meters != null && midx < meters.size())
+	    return meters.get(midx);
+	return null;
+    }
+    
 }

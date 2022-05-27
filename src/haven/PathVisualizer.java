@@ -76,6 +76,9 @@ public class PathVisualizer implements RenderTree.Node {
 		    path.update(null);
 		}
 	    } else {
+		if(CFG.FLATWORLD.get()) {
+		    lines.get(0).a.z = 0;
+		    lines.get(0).b.z = 0; }
 		path.update(lines);
 	    }
 	}

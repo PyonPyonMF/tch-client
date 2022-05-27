@@ -21,6 +21,7 @@ import static haven.QualityList.SingleType.*;
 public class ItemData {
     private static final ItemData EMPTY = new ItemData();
     private static Gson gson;
+    private static UI ui;
     private static Map<String, ItemData> item_data = new LinkedHashMap<String, ItemData>(9, 0.75f, true) {
 	private static final long serialVersionUID = 1L;
 

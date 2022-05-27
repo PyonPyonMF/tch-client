@@ -97,7 +97,8 @@ public class Fightsess extends Widget {
     protected void added() {
 	fv = parent.getparent(GameUI.class).fv;
 	presize();
-	ui.gui.calendar.hide();
+	if (CFG.HIDE_THE_CLOCK.get()) {
+	ui.gui.calendar.hide(); }
     }
 
     public void presize() {
@@ -215,7 +216,9 @@ public class Fightsess extends Widget {
 	updatepos();
         boolean altui = CFG.ALT_COMBAT_UI.get();
 	int x0 = ui.gui.calendar.rootpos().x + ui.gui.calendar.sz.x / 2;
-	int y0 = ui.gui.calendar.rootpos().y + ui.gui.calendar.sz.y / 2;
+	int x0mod = ui.gui.calendar.rootpos().x + ui.gui.calendar.sz.x / 2;
+	int y0 = ui.gui.calendar.rootpos().y + ui.gui.calendar.sz.y / 2 + 75;
+//	else y0 = ui.gui.calendar.rootpos().y + ui.gui.calendar.sz.y / 2;
 	int bottom = ui.gui.beltwdg.c.y - 40;
 	double now = Utils.rtime();
 
@@ -227,18 +230,37 @@ public class Fightsess extends Widget {
 
 	    g.aimage(ip.get().tex(), altui ? new Coord(x0 - UI.scale(45), y0 - UI.scale(16)) : pcc.add(-UI.scale(75), 0), 1, 0.5);
 	    g.aimage(oip.get().tex(), altui ? new Coord(x0 + UI.scale(45), y0 - UI.scale(16)) : pcc.add(UI.scale(75), 0), 0, 0.5);
-
 	    if(fv.lsrel.size() > (CFG.ALWAYS_MARK_COMBAT_TARGET.get() ? 0 : 1))
 		curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
 	}
 
 	{
-	    Coord cdc = altui ? new Coord(x0, y0) : pcc.add(cmc);
+	    Coord cdc = altui ? new Coord(x0, y0) : pcc.add(cmc); // TODO DONT HIDE THE CLOCK
+	    if(CFG.FIGHT_STAMINA_BAR.get()) {
+	    Coord istaze = UI.scale(100, 30);
+	    Coord offsett = UI.scale(x0 - UI.scale(48), y0 + UI.scale(100));
+	    Coord thirty = UI.scale(30, 30);
+	    g.chcolor(0,0,0,80);
+	    g.frect(offsett, istaze);
+	    g.chcolor(255,0,0,120);
+	    g.frect(offsett, thirty);
+	    g.chcolor(52,161,235,180);
+//	    int l = offsett.x;
+//	    int r = (ui.sess.stam + offsett.x);
+//	    g.frect(offsett, new Coord((int) Math.round(istaze.x * ui.sess.stam), istaze.y));
+	    g.frect(offsett, new Coord(ui.sess.stam, istaze.y));
+	    
+//	    g.frect(offsett, new Coord(istaze.x + ui.sess.stam, istaze.y));
+	    g.chcolor();
+//	    g.text(Utils.fmt1DecPlace(ui.sess.stam), new Coord(x0, y0 + UI.scale(110))); }
+	    g.text(Utils.fmt1DecPlace(ui.sess.stam), new Coord(x0 - 10, y0 + UI.scale(105)), new Text.Foundry(Text.sans.deriveFont(Font.BOLD), 15)); } // TODO BIGGER TEXT
 	    if(now < fv.atkct) {
 		double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
 		g.chcolor(255, 0, 128, 224);
 		g.fellipse(cdc, UI.scale(altui ? new Coord(24, 24) : new Coord(22, 22)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
 		g.chcolor();
+		if(CFG.SHOW_ACTION_COOLDOWN.get()) {
+		g.atext(Utils.fmt1DecPlace(fv.atkct - now), cdc, 0.5, 0.5); }
 	    }
 	    g.image(cdframe, altui ? new Coord(x0, y0).sub(cdframe.sz().div(2)) : cdc.sub(cdframe.sz().div(2)));
 	}

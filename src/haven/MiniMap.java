@@ -50,6 +50,7 @@ public class MiniMap extends Widget {
     private static final Color BIOME_BG = new Color(0, 0, 0, 80);
     public final MapFile file;
     public Location curloc;
+    private static KinInfo kin;
     public Location sessloc;
     public GobIcon.Settings iconconf;
     public List<DisplayIcon> icons = Collections.emptyList();
@@ -57,6 +58,7 @@ public class MiniMap extends Widget {
     protected boolean follow;
     protected int zoomlevel = 0;
     protected DisplayGrid[] display;
+    private final Map<Long, Tex> namemap = new HashMap<>(50);
     protected Area dgext, dtext;
     protected Segment dseg;
     protected int dlvl;
@@ -219,6 +221,7 @@ public class MiniMap extends Widget {
 	    }
 	}
 	icons = findicons(icons);
+	resolveNames();
 	if(CFG.MMAP_SHOW_BIOMES.get()) {
 	    Coord mc = rootxlate(ui.mc);
 	    if(mc.isect(Coord.z, sz)) {
@@ -689,14 +692,57 @@ public class MiniMap extends Widget {
 		it.remove();
 	}
     }
-
+    
+    public void resolveNames() {//used to load name textures even while the map is closed
+	try {
+	    synchronized (ui.sess.glob.party) {
+		for (Party.Member m : ui.sess.glob.party.memb.values()) {
+		    Coord2d ppc = m.getc();
+		    if (ppc == null) // chars are located in different worlds
+			continue;
+		    if (ui.sess.glob.party.memb.size() == 1) //don't do anything if you don't have a party
+			continue;
+		    Gob gob = m.getgob();
+		    if (gob != null) {
+			KinInfo kin = gob.getattr(KinInfo.class);
+			Tex tex = namemap.get(m.gobid);
+			if (tex == null && kin != null && !gob.isMe()) { //if we don't already have this nametex in memory, set one up.
+			    tex = Text.renderstroked(kin.name, Color.WHITE, Color.BLACK, Text.std).tex();
+			    namemap.put(m.gobid, tex);
+			}
+		    }
+		}
+	    }
+	} catch (Loading l) {
+	    //Fail silently
+	}
+    }
     public void drawparty(GOut g) {
 	synchronized(ui.sess.glob.party.memb) {
 	    for(Party.Member m : ui.sess.glob.party.memb.values()) {
 		try {
 		    Coord2d ppc = m.getc();
+		    Tex nametex = namemap.get(m.gobid);
 		    if(ppc == null)
 			continue;
+		    Gob gob = m.getgob();
+//		    if (gob != null && null != kin) {
+//			kin = gob.getattr(KinInfo.class);
+//			tex = namemap.get(kin.name);
+//			if (tex == null && kin != null) {
+//			    tex = Text.renderstroked(kin.name, Color.WHITE, Color.BLACK, Text.std).tex();
+//			    namemap.put(kin.name, tex);
+//			}
+//		    }
+		    if (nametex != null && gob == null) {
+			    g.chcolor(Color.WHITE);
+			    g.image(nametex, p2c(ppc).add(new Coord(-5, 5)));
+//			    g.chcolor(Color.WHITE);
+//			    g.aimage(RadarCFG.Symbols.$circle.tex, p2c(ppc), 0.5, 0.5);
+//			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
+//			    g.rotimage(plp, p2c(ppc), plp.sz().div(2), -m.geta() - (Math.PI / 2));
+//			    g.chcolor();
+			}
 		    g.chcolor(Color.WHITE);
 		    g.aimage(RadarCFG.Symbols.$circle.tex, p2c(ppc), 0.5, 0.5);
 		    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);

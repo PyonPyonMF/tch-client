@@ -28,13 +28,24 @@ package haven;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class IMeter extends LayerMeter {
+public class IMeter extends Widget {
     public static final Coord off = UI.scale(22, 7);
     public static final Coord fsz = UI.scale(101, 24);
     public static final Coord msz = UI.scale(75, 10);
+    public static final Coord oof = UI.scale(10, 10);
+    private static final Pattern hppat = Pattern.compile("Health: ([0-9]+)/([0-9]+)/([0-9]+)");
+    private static final Pattern stampat = Pattern.compile("Stamina: ([0-9]+)");
+    private static final Pattern energypat = Pattern.compile("Energy: ([0-9]+)");
     public final Indir<Resource> bg;
-
+    public double shp, hhp, mhp;
+    public double stam;
+    public double energy;
+    private static Meter staminaman;
+    public List<Meter> meters;
+    String meterinfo = "";
     @RName("im")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -43,13 +54,23 @@ public class IMeter extends LayerMeter {
 	    return(new IMeter(bg, meters));
 	}
     }
-
+    
     public IMeter(Indir<Resource> bg, List<Meter> meters) {
 	super(fsz);
 	this.bg = bg;
-	set(meters);
+	this.meters = meters;
     }
-
+    
+    public static class Meter {
+	public final Color c;
+	public final double a;
+	
+	public Meter(Color c, double a) {
+	    this.c = c;
+	    this.a = a;
+	}
+    }
+    
     public void draw(GOut g) {
 	try {
 	    Tex bg = this.bg.get().layer(Resource.imgc).tex();
@@ -65,6 +86,31 @@ public class IMeter extends LayerMeter {
 	    g.chcolor();
 	    g.image(bg, Coord.z);
 	} catch(Loading l) {
+	}
+    }
+    
+    private static List<Meter> decmeters(Object[] args, int s) {
+	ArrayList<Meter> buf = new ArrayList<>();
+	for(int a = s; a < args.length; a += 2)
+	    buf.add(new Meter((Color)args[a], ((Number)args[a + 1]).doubleValue() * 0.01));
+	buf.trimToSize();
+	return(buf);
+    }
+
+    public void uimsg(String msg, Object... args) {
+	if(msg == "set") {
+	    this.meters = decmeters(args, 0);
+//	    ui.message(String.format("arguments are %s", args), GameUI.MsgType.GOOD);
+	}
+//	if(msg == "tip") {
+//	    final String tt = (String) args[0];
+//	    Matcher matcher = stampat.matcher(tt);
+//	    if (matcher.find()) {
+//		ui.sess.stam = Integer.parseInt(matcher.group(1));
+//	    }	 }
+	else {
+	    super.uimsg(msg, args);
+//	    ui.message(String.format("msg and args are %s", msg, args), GameUI.MsgType.INFO);
 	}
     }
 }

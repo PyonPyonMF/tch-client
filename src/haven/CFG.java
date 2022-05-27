@@ -27,9 +27,11 @@ public class CFG<T> {
     public static final CFG<Boolean> SHOW_GOB_RADIUS = new CFG<>("display.show_gob_radius", false);
     public static final CFG<Boolean> SHOW_CONTAINER_FULLNESS = new CFG<>("display.container_status", false);
     public static final CFG<Boolean> SIMPLE_CROPS = new CFG<>("display.simple_crops", false);
+    public static final CFG<Boolean> PARTY_HIGHLIGHT = new CFG<>("display.party_highlight", true);
     public static final CFG<Boolean> STORE_MAP = new CFG<>("general.storemap", false);
     public static final CFG<Boolean> SHOW_TOOLBELT_0 = new CFG<>("general.toolbelt0", true);
     public static final CFG<Boolean> SHOW_TOOLBELT_1 = new CFG<>("general.toolbelt1", false);
+    public static final CFG<Boolean> FLATWORLD = new CFG<>("general.flatworld", false);
     public static final CFG<Boolean> ITEM_DROP_PROTECTION = new CFG<>("general.item_drop_protection", false);
     public static final CFG<Boolean> AUTO_PICK_ONLY_RADAR = new CFG<>("general.auto_pick_radar", true);
     public static final CFG<Integer> AUTO_PICK_RADIUS = new CFG<>("general.auto_pick_radius", 55);
@@ -37,10 +39,15 @@ public class CFG<T> {
     
     public static final CFG<Theme> THEME = new CFG<>("ui.theme", Theme.Pretty);
     public static final CFG<Boolean> FORCE_HW_CURSOR = new CFG<>("ui.force_hw_cursor", false);
+    public static final CFG<Boolean> ENTERING_MSG_IN_CHAT = new CFG<>("ui.entering_msg", false);
     public static final CFG<Boolean> DISABLE_UI_HIDING = new CFG<>("ui.disable_ui_hide", true);
     public static final CFG<Boolean> ALT_COMBAT_UI = new CFG<>("ui.combat.alt_ui", true);
     public static final CFG<Boolean> SIMPLE_COMBAT_OPENINGS = new CFG<>("ui.combat.simple_openings", true);
+    public static final CFG<Boolean> SHOW_ACTION_COOLDOWN = new CFG<>("ui.combat.cooldown", true);
     public static final CFG<Boolean> ALWAYS_MARK_COMBAT_TARGET = new CFG<>("ui.combat.always_mark_target", false);
+//    public static final CFG<Boolean> HIGHLIGHT_FOES = new CFG<>("ui.combat.highlightfoes", true);
+    public static final CFG<Boolean> FIGHT_STAMINA_BAR = new CFG<>("ui.combat.staminabar", true);
+    public static final CFG<Boolean> HIDE_THE_CLOCK = new CFG<>("ui.combat.hidetheclock", true);
     public static final CFG<Boolean> SHOW_COMBAT_DMG = new CFG<>("ui.combat.show_dmg", true);
     public static final CFG<Boolean> CLEAR_PLAYER_DMG_AFTER_COMBAT = new CFG<>("ui.combat.clear_player_damage_after", true);
     public static final CFG<Boolean> CLEAR_ALL_DMG_AFTER_COMBAT = new CFG<>("ui.combat.clear_all_damage_after", false);

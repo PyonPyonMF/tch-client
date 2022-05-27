@@ -38,6 +38,8 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Widget {
     public UI ui;
@@ -51,6 +53,7 @@ public class Widget {
     public Widget focused;
     public Indir<Resource> cursor = null;
     public Object tooltip = null;
+    private static final Pattern stampat = Pattern.compile("Stamina: ([0-9]+)");
     public KeyMatch gkey;
     public KeyBinding kb_gkey;
     private Widget prevtt;
@@ -704,6 +707,10 @@ public class Widget {
 	    int a = 0;
 	    Object tt = args[a++];
 	    if(tt instanceof String) {
+		Matcher matcher = stampat.matcher((CharSequence) tt);
+		if (matcher.find()) {
+		    ui.sess.stam = Integer.parseInt(matcher.group(1));
+		}
 		settip((String)tt);
 	    } else if(tt instanceof Integer) {
 		tooltip = new PaginaTip(ui.sess.getres((Integer)tt));

@@ -33,7 +33,7 @@ import haven.render.VertexArray.Layout;
 import haven.render.Model.Indices;
 import haven.render.Rendered;
 
-public class FastMesh implements Rendered.Instancable, RenderTree.Node, Disposable {
+public class FastMesh implements Rendered.Instancable, Disposable, RenderTree.Node {
     public final VertexBuf vert;
     public final ShortBuffer indb;
     public final int num;
@@ -50,11 +50,21 @@ public class FastMesh implements Rendered.Instancable, RenderTree.Node, Disposab
 			       new Indices(num * 3, NumberFormat.UINT16, DataBuffer.Usage.STATIC, this::indfill).shared().desc(this),
 			       0, num * 3).desc(this);
     }
+    
+    public FastMesh(VertexBuf vert, ShortBuffer ind, boolean yeah) {
+	this.vert = vert;
+	num = ind.capacity() / 3;
+	if(ind.capacity() != num * 3)
+	    throw(new RuntimeException("Invalid index array length"));
+	this.indb = ind;
+	    this.model = new Model(Model.Mode.TRIANGLES, vert.data2(),
+		new Indices(num * 3, NumberFormat.UINT16, DataBuffer.Usage.STATIC, this::indfill).shared(),
+		0, num * 3);
+    }
 
     public FastMesh(VertexBuf vert, short[] ind) {
 	this(vert, ShortBuffer.wrap(ind));
     }
-
     private FillBuffer indfill(Indices ibuf, Environment env) {
 	FillBuffer dst = env.fillbuf(ibuf);
 	ShortBuffer buf = dst.push().asShortBuffer();
