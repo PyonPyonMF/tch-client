@@ -151,9 +151,7 @@ public class Pointer extends Widget implements MiniMap.IPointer, DTarget {
 	Coord3f sl;
 	if(gob != null) {
 	    try {
-		Coord3f cc = gob.getc();
-		if(CFG.FLATWORLD.get()) { cc.z = 0; }
-		sl = getparent(GameUI.class).map.screenxf(cc);
+		sl = getparent(GameUI.class).map.screenxf(gob.getc());
 	    } catch (Loading l) {
 		return;
 	    }
