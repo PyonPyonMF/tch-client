@@ -371,7 +371,7 @@ public class TerrainTile extends Tiler implements Tiler.MCons, Tiler.CTrans {
 	public final Tiler.MCons rcons;
 	public final int rth;
 
-	@ResName("trn-r")
+	/** @ResName("trn-r")
 	public static class RFactory implements Tiler.Factory {
 	    public Tiler create(int id, Tileset set) {
 		TerrainTile base = new Factory().create(id, set);
@@ -395,7 +395,7 @@ public class TerrainTile extends Tiler implements Tiler.MCons, Tiler.CTrans {
 		return(new RidgeTile(base.id, base.noise, base.base, base.var, base.transset, (int)rth, mat, texh));
 	    }
 	}
-
+ **/
 	public RidgeTile(int id, SNoise3 noise, NodeWrap base, Var[] var, Tileset transset, int rth, Pipe.Op rmat, float texh) {
 	    super(id, noise, base, var, transset);
 	    this.rth = rth;

@@ -380,6 +380,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    map.click(this, 3, Coord.z);
 	} catch (Exception ignored) {}
     }
+    public void lclick() {
+        try {
+	    MapView map = glob.sess.ui.gui.map;
+	    map.click(this, 1, Coord.z);
+	} catch (Exception ignored) {}
+    }
     
     public void itemact() {
 	try {

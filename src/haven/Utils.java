@@ -703,7 +703,13 @@ public class Utils {
 	else
 	    return((char)('A' + num - 10));
     }
-
+    
+    
+    public static String fmt1DecPlace(double value) {
+	double rvalue = (double) Math.round(value * 10) / 10;
+	return (rvalue % 1 == 0) ? Integer.toString((int) rvalue) : Double.toString(rvalue);
+    }
+	
     static int hex2num(char hex) {
 	if((hex >= '0') && (hex <= '9'))
 	    return(hex - '0');

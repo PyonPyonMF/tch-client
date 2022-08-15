@@ -36,11 +36,19 @@ public class GobWarning extends GAttrib implements RenderTree.Node {
     public static boolean needsWarning(Gob gob) {
 	return categorize(gob) != null;
     }
-    
+    // TODO WARN ON PRIMARY TARGET
     private static WarnTarget categorize(Gob gob) {
-	if(gob.is(GobTag.FOE) && !gob.is(GobTag.DEAD)) {
+//        if (CFG.HIGHLIGHT_FOES.get()) {
+//	if ( ui != null && ui.sess.glob.party.memb.size() != 1) { //don't do anything if you don't have a party
+	if(gob.is(GobTag.FOE) && !gob.is(GobTag.DEAD) && !gob.is(GobTag.ME)) {
+//	    gob.highlightFoe(1);
 	    return player;
-	} else if(gob.is(GobTag.AGGRESSIVE) && !gob.anyOf(GobTag.DEAD, GobTag.KO)) {
+	}
+//	else if (gob.is(GobTag.FRIEND) || gob.isFriend() && gob.is(GobTag.PLAYER) && !gob.is(GobTag.ME))  { gob.highlightFoe(3); }
+//	else if (gob.is(GobTag.KO)) { gob.highlightFoe(2); }
+//	else if (gob.is(GobTag.FOE) && !gob.is(GobTag.DEAD)) {
+//	    return player;
+	else if(gob.is(GobTag.AGGRESSIVE) && !gob.anyOf(GobTag.DEAD, GobTag.KO)) {
 	    return animal;
 	} else if(gob.is(GobTag.GEM)) {
 	    return gem;

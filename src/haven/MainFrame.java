@@ -35,7 +35,7 @@ import java.util.*;
 import java.lang.reflect.*;
 
 public class MainFrame extends java.awt.Frame implements Console.Directory {
-    private static final String TITLE = String.format("Haven & Hearth modified by Ender (v%s)", Config.version);
+    private static final String TITLE = String.format("Ender Client (v%s) modified by Tchaika", Config.version);
     final UIPanel p;
     private final ThreadGroup g;
     private Thread mt;

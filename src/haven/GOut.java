@@ -234,9 +234,19 @@ public class GOut {
 	aimage(T, c, ax, ay);
 	T.dispose();
     }
+    
+    public void atext(String text, Coord c, double ax, double ay, Text.Foundry font) {
+	Text t = Text.renderstroked(text, font);
+	Tex T = t.tex();
+	aimage(T, c, ax, ay);
+	T.dispose();
+    }
 
     public void text(String text, Coord c) {
 	atext(text, c, 0, 0);
+    }
+    public void text(String text, Coord c, Text.Foundry font) {
+	atext(text, c, 0, 0, font);
     }
 
     public void drawp(Model.Mode mode, float[] data, int n) {

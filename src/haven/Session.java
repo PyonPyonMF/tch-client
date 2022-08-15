@@ -63,7 +63,8 @@ public class Session implements Resource.Resolver {
 	"gfx/hud/chr/custom/ahard",
 	"gfx/hud/chr/custom/asoft"
     };
-
+    public int stam;
+    
     DatagramSocket sk;
     SocketAddress server;
     Thread rworker, sworker;
