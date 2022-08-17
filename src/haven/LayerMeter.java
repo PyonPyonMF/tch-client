@@ -28,11 +28,14 @@ package haven;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class LayerMeter extends Widget implements ItemInfo.Owner {
     protected ItemInfo.Raw rawinfo = null;
     protected List<ItemInfo> info = Collections.emptyList();
     protected List<Meter> meters = Collections.emptyList();
+    private static final Pattern stampat = Pattern.compile("Stamina: ([0-9]+)");
 
     public LayerMeter(Coord sz) {
 	super(sz);
@@ -110,20 +113,34 @@ public abstract class LayerMeter extends Widget implements ItemInfo.Owner {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "set") {
+	if(msg == "set") { // metters initialization
 	    if(args.length == 1) {
+//		ui.message(String.format("argument one are %s", args), GameUI.MsgType.GOOD);
 		set(((Number)args[0]).doubleValue() * 0.01, meters.isEmpty() ? Color.WHITE : meters.get(0).c);
 	    } else {
+//		ui.message(String.format("arguments are %s", args), GameUI.MsgType.GOOD);
 		set(decmeters(args, 0));
 	    }
-	} else if(msg == "col") {
+	} else if(msg == "col") { // meters color?w
 	    set(meters.isEmpty() ? 0 : meters.get(0).a, (Color)args[0]);
-	} else if(msg == "tip") {
+	} else if(msg == "tip") { // meters update
 	    if(args[0] instanceof Object[]) {
 		rawinfo = new ItemInfo.Raw((Object[])args[0]);
 		info = null;
 		shorttip = longtip = null;
 	    } else {
+//		for (argument : args) {
+//		    ui.message(String.format("msg and args are %s and %s", msg, args), GameUI.MsgType.INFO);
+//		}
+		
+//		ui.message(String.format("msg and args are %s and %s", msg, args), GameUI.MsgType.INFO);
+		int a = 0;
+		Object tt = args[a++];
+		Matcher matcher = stampat.matcher((CharSequence) tt);
+		if (matcher.find()) {
+		    ui.sess.stam = Integer.parseInt(matcher.group(1));
+//		    ui.message(String.format("Stamina is %s", ui.sess.stam), GameUI.MsgType.INFO);
+		}
 		super.uimsg(msg, args);
 	    }
 	} else {

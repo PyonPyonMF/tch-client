@@ -58,7 +58,7 @@ public class IMeter extends LayerMeter {
 	    g.chcolor();
 	    for(Meter m : meters) {
 		int w = msz.x;
-		w = (int)Math.ceil(w * m.a);
+		w = (int)Math.ceil(w * m.a); // Наполнение
 		g.chcolor(m.c);
 		g.frect(off, new Coord(w, msz.y));
 	    }

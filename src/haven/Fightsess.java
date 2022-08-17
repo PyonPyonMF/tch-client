@@ -238,9 +238,10 @@ public class Fightsess extends Widget {
 	{
 	    Coord cdc = altui ? new Coord(x0, y0) : pcc.add(cmc); // TODO DONT HIDE THE CLOCK
 	    if(CFG.FIGHT_STAMINA_BAR.get()) {
-	    Coord istaze = UI.scale(100, 30);
-	    Coord offsett = UI.scale(x0 - UI.scale(48), y0 + UI.scale(100));
-	    Coord thirty = UI.scale(30, 30);
+	    Coord istaze = UI.scale(240, 40); // max stamina, size
+//	    Coord offsett = UI.scale(x0 - UI.scale(8), y0 + UI.scale(60)); // stamina bar init
+		Coord offsett = new Coord (x0 - 160, y0 + 120);
+	    Coord thirty = UI.scale(72, 40); // 30% stamina
 	    g.chcolor(0,0,0,80);
 	    g.frect(offsett, istaze);
 	    g.chcolor(255,0,0,120);
@@ -249,12 +250,12 @@ public class Fightsess extends Widget {
 //	    int l = offsett.x;
 //	    int r = (ui.sess.stam + offsett.x);
 //	    g.frect(offsett, new Coord((int) Math.round(istaze.x * ui.sess.stam), istaze.y));
-	    g.frect(offsett, new Coord(ui.sess.stam, istaze.y));
+	    g.frect(offsett, new Coord(ui.sess.stam * 3, istaze.y)); // init stamina bar
 	    
 //	    g.frect(offsett, new Coord(istaze.x + ui.sess.stam, istaze.y));
 	    g.chcolor();
 //	    g.text(Utils.fmt1DecPlace(ui.sess.stam), new Coord(x0, y0 + UI.scale(110))); }
-	    g.text(Utils.fmt1DecPlace(ui.sess.stam), new Coord(x0 - 10, y0 + UI.scale(105)), new Text.Foundry(Text.sans.deriveFont(Font.BOLD), 15)); } // TODO BIGGER TEXT
+	    g.text(Utils.fmt1DecPlace(ui.sess.stam), new Coord(x0 - 10, y0 + UI.scale(105)), new Text.Foundry(Text.sans.deriveFont(Font.BOLD), 15)); }
 	    if(now < fv.atkct) {
 		double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
 		g.chcolor(255, 0, 128, 224);
