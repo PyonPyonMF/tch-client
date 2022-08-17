@@ -94,6 +94,13 @@ public class Partyview extends Widget {
 	    return(tooltip = ki.rendered());
 	}
     }
+    
+    public boolean hasParty() {
+	if (this.party != null) {
+	    return true;
+	}
+	else return false;
+    }
 
     private void update() {
 	int asz = (sz.x - marg) / 2;
@@ -104,6 +111,9 @@ public class Partyview extends Widget {
 		if(m.gobid == ign)
 		    continue;
 		MemberView ava = old.remove(m);
+		Gob gob = m.getgob();
+		if (CFG.PARTY_HIGHLIGHT.get() && om.size() > 1)
+		    gob.highlightFoe(3);
 		if(ava == null)
 		    ava = add(new MemberView(Coord.of(asz), m));
 		if(avs == null)

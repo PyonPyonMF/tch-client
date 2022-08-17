@@ -866,6 +866,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 	h.start();
     }
+    public void highlightFoe(int tgt) {
+        FoeHighlight h = getattr(FoeHighlight.class);
+        if (h == null) {
+            h = new FoeHighlight(this, tgt);
+            setattr(h);
+            
+	}
+    }
     
     public String tooltip() {
 	String tt = null;
