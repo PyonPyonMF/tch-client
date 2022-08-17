@@ -27,7 +27,10 @@
 package haven;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.function.Predicate;
+
 import haven.render.*;
 import haven.Composited.Desc;
 import haven.Composited.MD;
@@ -35,6 +38,7 @@ import haven.Composited.ED;
 
 public class Avaview extends PView implements DTarget{
     public static final Tex missing = Resource.loadtex("gfx/hud/equip/missing");
+    public static final Tex Moose = Resource.loadtex("gfx/avacaming/los");
     public static final Coord dasz = missing.sz();
     public FColor clearcolor = FColor.BLACK;
     public long avagob;
@@ -242,6 +246,18 @@ public class Avaview extends PView implements DTarget{
     protected FColor clearcolor() {
 	return(clearcolor);
     }
+    private static Predicate<WItem> contains(String what) {
+	return w -> w.contains.get().is(what);
+    }
+    
+    private static Predicate<Gob> gobIs(String what) {
+	return g -> {
+	    if(g == null) { return false; }
+	    String id = g.resid();
+	    if(id == null) {return false;}
+	    return id.contains(what);
+	};
+    }
 
     public void draw(GOut g) {
 	boolean drawn = false;
@@ -250,10 +266,14 @@ public class Avaview extends PView implements DTarget{
 		Gob gob = ui.sess.glob.oc.getgob(avagob);
 		if(gob != null) {
 		    Avatar ava = gob.getattr(Avatar.class);
+//		    ui.message(String.format("avagob is %s", ui.sess.glob.oc.getgob(avagob)), GameUI.MsgType.INFO);
 		    if(ava != null) {
 			List<Resource.Image> imgs = ava.images();
 			if(imgs != null) {
-			    for(Resource.Image img : imgs) {
+			    for (Resource.Image img : imgs) {
+//				if (gob.resid().contains("moose")) {
+//				    g.image(Moose, Coord.z, this.sz);
+//				}
 				g.image(img.tex(), Coord.z, this.sz);
 			    }
 			    drawn = true;
