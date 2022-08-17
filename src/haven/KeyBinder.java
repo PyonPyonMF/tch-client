@@ -76,7 +76,7 @@ public class KeyBinder {
 	add(KeyEvent.VK_3, CTRL,  ACT_BELT);
     	add(KeyEvent.VK_D, ALT,   ACT_DRINK);
     	add(KeyEvent.VK_TAB, SHIFT, ACT_AGGRO_CLOSEST);
-//    	add(KeyEvent.VK_N, NONE, ACT_AGGRO_KIN);
+    	add(KeyEvent.VK_N, NONE, ACT_AGGRO_Kritter);
     	add(KeyEvent.VK_Q, NONE, ACT_CLOSE_DOOR);
     	add(KeyEvent.VK_E, ALT, ACT_MOUNT_HORSE);
     	add(KeyEvent.VK_B, NONE, ACT_AGGRO_HIGHLIGHT);

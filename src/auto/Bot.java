@@ -190,6 +190,17 @@ public class Bot implements Defer.Callable<Void> {
 	    .map(Target::new)
 	    .collect(Collectors.toList());
     }
+    
+    private static List<Target> getNearestKritters(GameUI gui) {
+	return gui.ui.sess.glob.oc.stream()
+	    .filter(gobIs("kritter"))
+	    .filter(gob -> distanceToPlayer(gob) <= 600)
+	    .filter(gob -> distanceToPlayer(gob) != 0)
+	    .sorted(byDistance)
+	    .limit(1)
+	    .map(Target::new)
+	    .collect(Collectors.toList());
+    }
     private static List<Target> getNearestPlayers(GameUI gui) {
         return  gui.ui.sess.glob.oc.stream()
 	    .filter(gobIs("body"))
@@ -256,6 +267,14 @@ public class Bot implements Defer.Callable<Void> {
 		start(new Bot(players, AggroClosest(gui)), gui.ui);
 	    }
 	    
+    }
+    
+    public static void  AggroClosestKritter(GameUI gui) {
+	List<Target> kritters = getNearestKritters(gui);
+	if(!kritters.isEmpty()) {
+	    start(new Bot(kritters, AggroClosest(gui)), gui.ui);
+	}
+	
     }
     
     private static BotAction fuelWith(GameUI gui, String fuel, int count) {

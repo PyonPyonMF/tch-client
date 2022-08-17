@@ -9,6 +9,7 @@ public enum Action {
     ACT_BELT(gui -> gui.eqproxy.activate(Equipory.SLOTS.BELT, 3), "Belt", "Right click on belt slot."),
     ACT_DRINK(Bot::drink, "Drink", "Drinks water."),
     ACT_AGGRO_CLOSEST(Bot::AggroClosestGob, "Aggro closest player"),
+    ACT_AGGRO_Kritter(Bot::AggroClosestKritter, "Aggro closest kritter"),
     ACT_CLOSE_DOOR(Bot::CloseDoor, "Close door"),
     ACT_MOUNT_HORSE(Bot::MountHorse, "Mount nearest horse"),
     ACT_AGGRO_HIGHLIGHT(Bot::AggroByHighlightGob, "Aggro highlighted foe"),
