@@ -1240,10 +1240,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public DirLight amblight = null;
     private RenderTree.Slot s_amblight = null;
+    private static final Color lambolight = new Color(200, 200, 200);
     private void amblight() {
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
-		amblight = new DirLight(glob.blightamb, glob.blightdif, glob.blightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+		final boolean nightvision = CFG.NIGHTVISION.get();
+		final Color lamb = nightvision ? lambolight : glob.blightamb;
+		final Color tdif = nightvision ? lambolight : glob.blightdif;
+		final Color spc = nightvision ? new Color(255, 255, 255) : glob.blightspc;
+		
+		amblight = new DirLight(lamb, tdif, spc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
 		amblight.prio(100);
 	    } else {
 		amblight = null;
