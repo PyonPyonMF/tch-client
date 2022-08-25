@@ -56,12 +56,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     private Loader.Future<?> deferral = null;
     private final Object removalLock = new Object();
     private GobDamageInfo damage;
+    public GobIPInfo IP;
     private HidingGobSprite<Hitbox> hitbox = null;
     public Drawable drawable;
     public Moving moving;
     private Boolean isMe = null;
     private final GeneralGobInfo info;
     private GobWarning warning = null;
+//    private GobSquareHitbox squarebox = null;
     public StatusUpdates status = new StatusUpdates();
     private final CustomColor customColor = new CustomColor();
     private final Set<GobTag> tags = new HashSet<>();
@@ -374,6 +376,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	damage = null;
     }
     
+    public void addIP()
+    {
+	IP = new GobIPInfo(this);
+	setattr(GobIPInfo.class, IP);
+    }
+    public void ProcessIP(int ip) {
+	IP.update(ip);
+//	glob.sess.ui.message(String.format("Im updooting %s", ip), GameUI.MsgType.GOOD);
+    }
+    public void clearIP() {
+	setattr(GobIPInfo.class, null);
+	IP = null;
+    }
+    
     public void rclick() {
 	try {
 	    MapView map = glob.sess.ui.gui.map;
@@ -529,7 +545,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 	if(ac == Moving.class) {updateMovingInfo(a, prev);}
     }
-
     public void setattr(GAttrib a) {
 	setattr(attrclass(a.getClass()), a);
     }
@@ -924,8 +939,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		}
 	    }
 	    if(needHide) {
+//		squarebox = new GobSquareHitbox(this);
+//		setattr(squarebox);
 		tag(GobTag.HIDDEN);
+		
 	    } else {
+//		squarebox = null;
 	        untag(GobTag.HIDDEN);
 	    }
 	    return true;

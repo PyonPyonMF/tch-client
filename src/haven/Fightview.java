@@ -316,9 +316,16 @@ public class Fightview extends Widget {
     public void uimsg(String msg, Object... args) {
         if(msg == "new") {
             Relation rel = new Relation(uint32((Integer)args[0]));
+	    Gob gob =  ui.sess.glob.oc.getgob(Long.valueOf((Integer)args[0]));
 	    rel.give((Integer)args[1]);
 	    rel.ip = (Integer)args[2];
 	    rel.oip = (Integer)args[3];
+	    gob.addIP();
+	    gob.ProcessIP(rel.ip);
+	    for (Object arg : args) {
+//		ui.message(String.format("new argument is %s", arg), GameUI.MsgType.INFO);
+	    }
+//	    ui.message(String.format("args are %s", args), GameUI.MsgType.INFO); // ip your ip
             lsrel.addFirst(rel);
 	    updrel();
 	    if(rel.gst == 0 && CFG.COMBAT_AUTO_PEACE.get()) {
@@ -327,6 +334,8 @@ public class Fightview extends Widget {
             return;
         } else if(msg == "del") {
             Relation rel = getrel(uint32((Integer)args[0]));
+	    Gob gob =  ui.sess.glob.oc.getgob(Long.valueOf((Integer)args[0]));
+	    gob.clearIP();
 	    rel.remove();
             lsrel.remove(rel);
 	    if(rel == current)
@@ -334,13 +343,21 @@ public class Fightview extends Widget {
 	    updrel();
             return;
         } else if(msg == "upd") {
+	    for (Object arg : args) {
+//		ui.message(String.format("upd argument is %s", arg), GameUI.MsgType.INFO);
+	    }
             Relation rel = getrel(uint32((Integer)args[0]));
+	    Gob gob =  ui.sess.glob.oc.getgob(Long.valueOf((Integer)args[0]));
             int was = rel.gst;
 	    rel.give((Integer)args[1]);
 	    if(was == 2 && rel.gst == 0 && CFG.COMBAT_AUTO_PEACE.get()) {
 		wdgmsg("give", (int) rel.gobid, 1);
 	    }
 	    rel.ip = (Integer)args[2];
+	    gob.ProcessIP(rel.ip);
+//	    gob.IP.update(rel.ip);
+//	    ui.message(String.format("rel.ip is %s", rel.ip), GameUI.MsgType.INFO);
+//	    ui.message(String.format("while gob ipint is %s",  ));
 	    rel.oip = (Integer)args[3];
             return;
 	} else if(msg == "used") {
